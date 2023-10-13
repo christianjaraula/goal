@@ -8,6 +8,7 @@ export default function App() {
   const [courseGoals, setCourseGoals] = useState([]);
   const [isModalVisible, setModalVisible] = useState(false);
   const [isWelcomeModalVisible, setWelcomeModalVisible] = useState(false);
+  const [warningShown, setWarningShown] = useState(false);
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -18,14 +19,15 @@ export default function App() {
   };
 
   function addGoalHandler(enteredGoalText) {
-    if (courseGoals.length >= 5) {
+    if (courseGoals.length >= 5 && !warningShown) {
       toggleModal();
-      return;
+      setWarningShown(true);
+    } else {
+      setCourseGoals((currentCourseGoals) => [
+        ...currentCourseGoals,
+        { text: enteredGoalText, key: Math.random().toString() },
+      ]);
     }
-    setCourseGoals((currentCourseGoals) => [
-      ...currentCourseGoals,
-      { text: enteredGoalText, key: Math.random().toString() },
-    ]);
   }
 
   function deleteGoalHandler(goalKey) {
@@ -37,8 +39,8 @@ export default function App() {
   return (
     <View style={styles.appContainer}>
       <View style={styles.titleContainer}>
-      <TouchableOpacity onPress={toggleWelcomeModal}>
-          <NightlightIcon style={styles.icon} />  
+        <TouchableOpacity onPress={toggleWelcomeModal}>
+          <NightlightIcon style={styles.icon} />
         </TouchableOpacity>
         <Text style={styles.titleText}>Hello, Team AINC</Text>
       </View>
@@ -62,7 +64,7 @@ export default function App() {
             <Text style={styles.modalText}>
               Be mindful of overwhelming yourself with too much burden.
             </Text>
-            <TouchableOpacity onPress={toggleModal}>
+            <TouchableOpacity onPress={() => toggleModal()}>
               <Text style={styles.closeModalButton}>Close</Text>
             </TouchableOpacity>
           </View>
@@ -72,10 +74,8 @@ export default function App() {
       <Modal transparent={true} animationType="slide" visible={isWelcomeModalVisible}>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalText}>
-              Welcome to the application!
-            </Text>
-            <TouchableOpacity onPress={toggleWelcomeModal}>
+            <Text style={styles.modalText}>Welcome to the application!</Text>
+            <TouchableOpacity onPress={() => toggleWelcomeModal()}>
               <Text style={styles.closeModalButton}>Close</Text>
             </TouchableOpacity>
           </View>
